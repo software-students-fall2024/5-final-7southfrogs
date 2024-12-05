@@ -5,7 +5,6 @@
 {% block content %}
 <h1>Recipes Based on Your Pantry</h1>
 
-<!-- Search Bar -->
 <div class="search-container">
     <input
         type="text"
@@ -38,10 +37,8 @@
     <p id="no-recipes-message">No recipes found based on your pantry items.</p>
 {% endif %}
 
-<!-- Modal Overlay -->
 <div id="modal-overlay" class="overlay" onclick="closeModal()"></div>
 
-<!-- Modal -->
 <div id="recipe-modal" class="modal">
     <div class="modal-content">
         <button class="close" onclick="closeModal()">&times;</button>
@@ -66,14 +63,13 @@
         recipeCards.forEach(card => {
             const title = card.querySelector(".recipe-title").textContent.toLowerCase();
             if (title.includes(query)) {
-                card.style.display = "block"; // Show matching recipes
+                card.style.display = "block";
                 hasResults = true;
             } else {
-                card.style.display = "none"; // Hide non-matching recipes
+                card.style.display = "none";
             }
         });
 
-        // Show or hide the "no recipes" message
         if (hasResults) {
             noRecipesMessage.style.display = "none";
         } else {
@@ -90,14 +86,12 @@
         const modalIngredients = document.getElementById("modal-ingredients");
         const modalDiet = document.getElementById("modal-diet");
 
-        // Clear previous content
         modalTitle.textContent = "Loading...";
         modalImage.src = "";
         modalSource.textContent = "";
         modalIngredients.innerHTML = "";
         modalDiet.innerHTML = "";
 
-        // Fetch recipe details
         fetch(`/recipe/${recipeId}`)
             .then(response => response.json())
             .then(data => {
@@ -162,7 +156,6 @@
 </script>
 
 <style>
-    /* General Styling */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -217,7 +210,6 @@
         background-color: #0056b3;
     }
 
-    /* Search Bar Styling */
     .search-container {
         margin-bottom: 20px;
         display: flex;
@@ -233,7 +225,6 @@
         border-radius: 5px;
     }
 
-    /* Overlay Styling */
     .overlay {
         display: none;
         position: fixed;
@@ -245,7 +236,6 @@
         z-index: 999;
     }
 
-    /* Modal Styling */
     .modal {
         display: none;
         position: fixed;
@@ -292,12 +282,10 @@
         color: red;
     }
 
-    /* Prevent background scrolling when modal is open */
     body.modal-open {
         overflow: hidden;
     }
 
-    /* No Recipes Message */
     #no-recipes-message {
         text-align: center;
         font-size: 1.2rem;

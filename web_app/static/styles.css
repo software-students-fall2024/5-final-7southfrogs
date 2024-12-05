@@ -204,7 +204,7 @@ form input:focus, form select:focus, form textarea:focus {
 
 /* Made Recipe Card */
 .recipe-card.made {
-    background: linear-gradient(135deg, #28a745, #34d058); /* Modern green gradient */
+    background: linear-gradient(135deg, #28a745, #34d058);
     color: white;
     transition: all 0.4s ease-in-out;
     box-shadow: 0 8px 15px rgba(40, 167, 69, 0.5);
@@ -213,7 +213,7 @@ form input:focus, form select:focus, form textarea:focus {
 .recipe-card.made h2, 
 .recipe-card.made p, 
 .recipe-card.made a {
-    color: white; /* Ensure text and links are visible */
+    color: white;
 }
 
 .recipe-card.made button {
@@ -226,8 +226,8 @@ form input:focus, form select:focus, form textarea:focus {
 .recipe-card.made button:hover {
     background: white;
     color: #28a745;
-    box-shadow: none; /* No hover effect for buttons */
-    cursor: default; /* No pointer cursor for already made recipes */
+    box-shadow: none;
+    cursor: default;
 }
 
 
