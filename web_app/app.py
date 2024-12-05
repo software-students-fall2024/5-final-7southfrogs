@@ -1,3 +1,7 @@
+"""
+This module defines the Flask application and its routes.
+"""
+
 import os
 import logging
 from flask import (
@@ -159,7 +163,6 @@ def profile():
         health_labels=HEALTH_LABELS,
     )
 
-
 @app.route("/search", methods=["GET"])
 @login_required
 def search_recipes():
@@ -167,15 +170,25 @@ def search_recipes():
     username = session["username"]
 
     user = users_collection.find_one({"username": username})
-    pantry_items = user.get("pantry", []) if user else []
-    dietary_restrictions = user.get("dietary_restrictions", []) if user else []
+    if not user:
+        flash("User not found.")
+        return redirect(url_for("home"))
+
+    pantry_items = user.get("pantry", [])
+    dietary_restrictions = user.get("dietary_restrictions", [])
 
     if not pantry_items:
         flash("Your pantry is empty. Add items to your pantry to search recipes.")
         return render_template("recipes.html", recipes=[], query="")
 
-    recipes_dict = {}
+    recipes = fetch_recipes_from_api(pantry_items, dietary_restrictions)
+    return render_template(
+        "recipes.html", recipes=recipes, pantry_items=pantry_items
+    )
 
+def fetch_recipes_from_api(pantry_items, dietary_restrictions):
+    """Fetch recipes from the API based on pantry items and dietary restrictions."""
+    recipes_dict = {}
     common_params = {
         "type": "public",
         "app_id": EDAMAM_APP_ID,
@@ -184,14 +197,14 @@ def search_recipes():
         "to": 10,
     }
 
-    for restriction in dietary_restrictions:
-        common_params.setdefault("health", []).append(restriction)
+    if dietary_restrictions:
+        common_params["health"] = dietary_restrictions
 
     try:
         for item in pantry_items:
             params = common_params.copy()
             params["q"] = item
-            response = requests.get(EDAMAM_BASE_URL, params=params)
+            response = requests.get(EDAMAM_BASE_URL, params=params, timeout=10)
             response.raise_for_status()
             hits = response.json().get("hits", [])
 
@@ -209,17 +222,10 @@ def search_recipes():
                         "url": recipe.get("url", "#"),
                         "dietary_restrictions": recipe.get("healthLabels", []),
                     }
-
-        recipes = list(recipes_dict.values())
-
-        return render_template(
-            "recipes.html", recipes=recipes, pantry_items=pantry_items
-        )
+        return list(recipes_dict.values())
     except requests.exceptions.RequestException as e:
-        return render_template(
-            "recipes.html", recipes=[], pantry_items=pantry_items, error=str(e)
-        )
-
+        flash(f"An error occurred while fetching recipes: {str(e)}")
+        return []
 
 @app.route("/pantry", methods=["GET", "POST"])
 @login_required
@@ -268,9 +274,9 @@ def save_recipe():
     user = users_collection.find_one({"username": username})
 
     if user:
-        saved_recipes = user.get("saved_recipes", [])
-        if any(
-            recipe["recipe_id"] == recipe_data["recipe_id"] for recipe in saved_recipes
+        user_saved_recipes = user.get("saved_recipes", [])
+        if isinstance(user_saved_recipes, list) and any(
+            recipe["recipe_id"] == recipe_data["recipe_id"] for recipe in user_saved_recipes
         ):
             return jsonify({"message": "Recipe already saved."}), 400
 
@@ -296,10 +302,6 @@ def unsave_recipe():
     return redirect(url_for("saved_recipes"))
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
-
 @app.route("/recipe/<recipe_id>", methods=["GET"])
 @login_required
 def get_recipe_details(recipe_id):
@@ -312,6 +314,7 @@ def get_recipe_details(recipe_id):
                 "app_id": EDAMAM_APP_ID,
                 "app_key": EDAMAM_APP_KEY,
             },
+            timeout=10,
         )
         response.raise_for_status()
         recipe = response.json().get("recipe", {})
@@ -330,9 +333,9 @@ def made_recipe():
     user = users_collection.find_one({"username": username})
 
     # Find the recipe in the user's saved_recipes list
-    saved_recipes = user.get("saved_recipes", [])
+    user_saved_recipes = user.get("saved_recipes", [])
     recipe_to_move = None
-    for recipe in saved_recipes:
+    for recipe in user_saved_recipes:
         if recipe["recipe_id"] == recipe_id:
             recipe_to_move = recipe
             break
@@ -349,7 +352,7 @@ def made_recipe():
         )
         flash("Recipe marked as made.")
     else:
-        flash("Recipe not found in saved_recipes.")
+        flash("Recipe not found in saved recipes.")
 
     return redirect(url_for("saved_recipes"))
 
@@ -364,7 +367,7 @@ def unsave_made_recipe():
     users_collection.update_one(
         {"username": username}, {"$pull": {"made_recipes": {"recipe_id": recipe_id}}}
     )
-    flash("Recipe removed from made_recipes.")
+    flash("Recipe removed from made recipes.")
     return redirect(url_for("saved_recipes"))
 
 
@@ -376,11 +379,16 @@ def saved_recipes():
     user = users_collection.find_one({"username": username})
 
     if user:
-        saved_recipes = user.get("saved_recipes", [])
+        user_saved_recipes = user.get("saved_recipes", [])
         made_recipes = user.get("made_recipes", [])
         return render_template(
-            "saved_recipes.html", saved_recipes=saved_recipes, made_recipes=made_recipes
+            "saved_recipes.html",
+            saved_recipes=user_saved_recipes,
+            made_recipes=made_recipes,
         )
-    else:
-        flash("User not found.")
-        return redirect(url_for("home"))
+    flash("User not found.")
+    return redirect(url_for("home"))
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
