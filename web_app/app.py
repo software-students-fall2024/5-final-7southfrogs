@@ -1,3 +1,7 @@
+"""
+This module defines the Flask application and its routes.
+"""
+
 import os
 import logging
 from flask import (
