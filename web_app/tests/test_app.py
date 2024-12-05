@@ -44,7 +44,6 @@ def test_register_existing_user(client, test_users):
 
 
 def test_login_failure(client):
-    """Test login with invalid credentials."""
     response = client.post('/login', data={
         'username': 'wronguser',
         'password': 'wrongpassword'
@@ -164,4 +163,5 @@ def test_update_pantry(client, test_users):
         sess['username'] = 'testuser'
     test_users.insert_one({"username": "testuser", "pantry": []})
     response = client.post('/pantry', data={"ingredient": "tomato"}, follow_redirects=True)
+    
     assert response.status_code == 200
