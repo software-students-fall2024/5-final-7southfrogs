@@ -9,3 +9,4 @@ pythonpath = [
 testpaths = [
     "tests",
 ]
+pytest-cov = "^4.0"
