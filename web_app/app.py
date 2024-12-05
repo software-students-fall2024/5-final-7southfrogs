@@ -195,7 +195,7 @@ def search_recipes():
         for item in pantry_items:
             params = common_params.copy()
             params["q"] = item
-            response = requests.get(EDAMAM_BASE_URL, params=params)
+            response = requests.get(EDAMAM_BASE_URL, params=params, timeout=10)
             response.raise_for_status()
             hits = response.json().get("hits", [])
 
@@ -300,10 +300,6 @@ def unsave_recipe():
     return redirect(url_for("saved_recipes"))
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
-
 @app.route("/recipe/<recipe_id>", methods=["GET"])
 @login_required
 def get_recipe_details(recipe_id):
@@ -316,6 +312,7 @@ def get_recipe_details(recipe_id):
                 "app_id": EDAMAM_APP_ID,
                 "app_key": EDAMAM_APP_KEY,
             },
+            timeout=10,
         )
         response.raise_for_status()
         recipe = response.json().get("recipe", {})
@@ -334,9 +331,9 @@ def made_recipe():
     user = users_collection.find_one({"username": username})
 
     # Find the recipe in the user's saved_recipes list
-    saved_recipes = user.get("saved_recipes", [])
+    user_saved_recipes = user.get("saved_recipes", [])
     recipe_to_move = None
-    for recipe in saved_recipes:
+    for recipe in user_saved_recipes:
         if recipe["recipe_id"] == recipe_id:
             recipe_to_move = recipe
             break
@@ -353,7 +350,7 @@ def made_recipe():
         )
         flash("Recipe marked as made.")
     else:
-        flash("Recipe not found in saved_recipes.")
+        flash("Recipe not found in saved recipes.")
 
     return redirect(url_for("saved_recipes"))
 
@@ -368,7 +365,7 @@ def unsave_made_recipe():
     users_collection.update_one(
         {"username": username}, {"$pull": {"made_recipes": {"recipe_id": recipe_id}}}
     )
-    flash("Recipe removed from made_recipes.")
+    flash("Recipe removed from made recipes.")
     return redirect(url_for("saved_recipes"))
 
 
@@ -380,11 +377,16 @@ def saved_recipes():
     user = users_collection.find_one({"username": username})
 
     if user:
-        saved_recipes = user.get("saved_recipes", [])
+        user_saved_recipes = user.get("saved_recipes", [])
         made_recipes = user.get("made_recipes", [])
         return render_template(
-            "saved_recipes.html", saved_recipes=saved_recipes, made_recipes=made_recipes
+            "saved_recipes.html",
+            saved_recipes=user_saved_recipes,
+            made_recipes=made_recipes,
         )
-    else:
-        flash("User not found.")
-        return redirect(url_for("home"))
+    flash("User not found.")
+    return redirect(url_for("home"))
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
