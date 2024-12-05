@@ -7,7 +7,6 @@
 
 {% if saved_recipes or made_recipes %}
     <div class="grid">
-        <!-- Display saved recipes -->
         {% for recipe in saved_recipes %}
         <div class="recipe-card" id="recipe-{{ recipe.recipe_id }}">
             <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
@@ -24,7 +23,6 @@
         </div>
         {% endfor %}
 
-        <!-- Display made recipes -->
         {% for recipe in made_recipes %}
         <div class="recipe-card made" id="made-recipe-{{ recipe.recipe_id }}">
             <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
@@ -45,15 +43,12 @@
 
 <script>
     function markAsMade(cardElement) {
-        // Add the 'made' class to the recipe card
         cardElement.classList.add("made");
 
-        // Update button state and text
         const button = cardElement.querySelector(".mark-made-btn");
         button.textContent = "You've made this!";
         button.disabled = true;
 
-        // Optionally, send an AJAX request to update the backend
         const recipeId = cardElement.id.split("-")[1];
         fetch("/made_recipe", {
             method: "POST",
