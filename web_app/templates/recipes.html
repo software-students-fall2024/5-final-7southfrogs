@@ -5,12 +5,22 @@
 {% block content %}
 <h1>Recipes Based on Your Pantry</h1>
 
+<!-- Search Bar -->
+<div class="search-container">
+    <input
+        type="text"
+        id="search-input"
+        placeholder="Search for recipes by name..."
+        oninput="searchRecipes()"
+    />
+</div>
+
 {% if recipes %}
-    <div class="grid">
+    <div id="recipe-grid" class="grid">
         {% for recipe in recipes %}
         <div class="recipe-card">
             <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
-            <h2>{{ recipe.name }}</h2>
+            <h2 class="recipe-title">{{ recipe.name }}</h2>
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
             <button onclick="openModal('{{ recipe.recipe_id }}')">More Info</button>
@@ -25,7 +35,7 @@
         {% endfor %}
     </div>
 {% else %}
-    <p>No recipes found based on your pantry items.</p>
+    <p id="no-recipes-message">No recipes found based on your pantry items.</p>
 {% endif %}
 
 <!-- Modal Overlay -->
@@ -46,6 +56,31 @@
 </div>
 
 <script>
+    function searchRecipes() {
+        const query = document.getElementById("search-input").value.toLowerCase();
+        const recipeCards = document.querySelectorAll(".recipe-card");
+        const noRecipesMessage = document.getElementById("no-recipes-message");
+
+        let hasResults = false;
+
+        recipeCards.forEach(card => {
+            const title = card.querySelector(".recipe-title").textContent.toLowerCase();
+            if (title.includes(query)) {
+                card.style.display = "block"; // Show matching recipes
+                hasResults = true;
+            } else {
+                card.style.display = "none"; // Hide non-matching recipes
+            }
+        });
+
+        // Show or hide the "no recipes" message
+        if (hasResults) {
+            noRecipesMessage.style.display = "none";
+        } else {
+            noRecipesMessage.style.display = "block";
+        }
+    }
+
     function openModal(recipeId) {
         const modal = document.getElementById("recipe-modal");
         const overlay = document.getElementById("modal-overlay");
@@ -182,6 +217,22 @@
         background-color: #0056b3;
     }
 
+    /* Search Bar Styling */
+    .search-container {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    #search-input {
+        width: 60%;
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
     /* Overlay Styling */
     .overlay {
         display: none;
@@ -244,6 +295,15 @@
     /* Prevent background scrolling when modal is open */
     body.modal-open {
         overflow: hidden;
+    }
+
+    /* No Recipes Message */
+    #no-recipes-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        margin-top: 20px;
+        display: none;
     }
 </style>
 {% endblock %}
