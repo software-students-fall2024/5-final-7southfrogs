@@ -55,8 +55,8 @@ nav ul li a {
     transition: all 0.4s ease-in-out;
 }
 .logout-link:hover {
-    background: white;
-    color: red;
+    background: #cc0000;
+    color: white;
     box-shadow: none;
 }
 
@@ -110,10 +110,46 @@ button, .back-home, a {
     box-shadow: none;
 }
 
-button:hover, .back-home:hover, a:hover {
+/* Exclude yes-btn and no-btn from universal hover */
+button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-home:hover, a:hover {
     background: linear-gradient(90deg, #b03060, #ff5c8a);
     color: white;
     box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
+}
+
+/* Remove button red */
+.remove-btn {
+    background: red;
+    color: white;
+    border: none;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.4s ease-in-out;
+}
+
+.remove-btn:hover {
+    background: #cc0000;
+    color: white;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+/* Reset button (Orange/Yellow) */
+.reset-btn {
+    background: #ffaa00;
+    color: black;
+    border: none;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.4s ease-in-out;
+}
+
+.reset-btn:hover {
+    background: linear-gradient(90deg, #e6b800, #e69900);
+    box-shadow: 0 8px 20px rgba(230, 184, 0, 0.5);
+    color: black;
 }
 
 /* Boxed Form */
@@ -215,23 +251,6 @@ button:hover, .back-home:hover, a:hover {
     color: #ff5c8a;
 }
 
-/* Buttons inside recipe cards */
-.recipe-card button {
-    background: linear-gradient(90deg, #800080, #b03060);
-    padding: 8px 15px;
-    border-radius: 20px;
-    color: white;
-    cursor: pointer;
-    margin: 5px;
-    transition: all 0.4s ease-in-out;
-}
-
-.recipe-card button:hover {
-    background: linear-gradient(90deg, #b03060, #ff5c8a);
-    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
-    color: white;
-}
-
 /* Lists */
 .list-container {
     background: rgba(255, 255, 255, 0.1);
@@ -267,37 +286,6 @@ button:hover, .back-home:hover, a:hover {
     color: white;
 }
 
-/* Remove old made class since we'll use made-liked and made-disliked instead
-.recipe-card.made {
-    background: linear-gradient(135deg, #28a745, #34d058);
-    color: white;
-    transition: all 0.4s ease-in-out;
-    box-shadow: 0 8px 15px rgba(40,167,69,0.5);
-    border: none;
-}
-
-.recipe-card.made h2, 
-.recipe-card.made p, 
-.recipe-card.made a {
-    color: white;
-}
-
-.recipe-card.made button {
-    background: white;
-    color: #28a745;
-    border: 2px solid white;
-    cursor: default;
-    transition: none;
-}
-
-.recipe-card.made button:hover {
-    background: white;
-    color: #28a745;
-    box-shadow: none;
-    cursor: default;
-}
-*/
-
 /* New classes for Liked/Disliked recipes */
 .recipe-card.made-liked {
     background: linear-gradient(to bottom, #b2f2bb, #63e6be);
@@ -318,21 +306,23 @@ button:hover, .back-home:hover, a:hover {
     color: black; 
 }
 
-.recipe-card.made-liked button,
-.recipe-card.made-disliked button {
-    background: white;
-    color: black;
-    border: 2px solid white;
-    cursor: default;
-    transition: none;
-}
-
 .recipe-card.made-liked button:hover,
 .recipe-card.made-disliked button:hover {
     background: white;
     color: black;
     box-shadow: none;
-    cursor: default;
+    cursor: pointer;
+}
+
+/* Status Bubble */
+.status-bubble {
+    display: inline-block;
+    background: white;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-weight: 600;
 }
 
 /* Profile Container */
@@ -404,6 +394,11 @@ button:hover, .back-home:hover, a:hover {
     width: 80%;
 }
 
+.modal-content h2 {
+    color: black;
+    margin-bottom: 10px;
+}
+
 .modal-actions {
     display: flex;
     justify-content: center;
@@ -411,19 +406,35 @@ button:hover, .back-home:hover, a:hover {
     margin-top: 20px;
 }
 
-.modal-actions button {
-    margin: 10px;
-    background: linear-gradient(90deg, #ff758c, #ff5c8a);
+/* Yes (Green) and No (Red) Buttons with consistent hover */
+.yes-btn {
+    background: linear-gradient(to bottom, #b2f2bb, #63e6be);
+    color: black;
+    border: none;
     padding: 10px 20px;
     border-radius: 30px;
-    color: white;
-    cursor: pointer;
-    border: none;
-    transition: all 0.4s ease-in-out;
+    font-size: 1rem;
+    box-shadow: 0 0 8px #63e6be;
+    transition: box-shadow 0.4s ease-in-out;
 }
 
-.modal-actions button:hover {
-    background: linear-gradient(90deg, #b03060, #ff5c8a);
-    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
-    color: white;
+.no-btn {
+    background: linear-gradient(to bottom, #ffa8a8, #ff6b6b);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    box-shadow: 0 0 8px #ff6b6b;
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.yes-btn:hover {
+    background: linear-gradient(to bottom, #b2f2bb, #63e6be);
+    box-shadow: 0 0 15px 3px #63e6be;
+}
+
+.no-btn:hover {
+    background: linear-gradient(to bottom, #ffa8a8, #ff6b6b);
+    box-shadow: 0 0 15px 3px #ff6b6b;
 }

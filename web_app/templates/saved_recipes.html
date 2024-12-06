@@ -14,13 +14,14 @@
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
+            <button type="button" class="mark-made-btn" onclick="openModal('{{ recipe.recipe_id }}')">
+                I made this
+            </button>
+            <!-- Remove is at the bottom before "I made this" in saved state -->
             <form action="{{ url_for('unsave_recipe') }}" method="post">
                 <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
                 <button type="submit" class="remove-btn">Remove</button>
             </form>
-            <button type="button" class="mark-made-btn" onclick="openModal('{{ recipe.recipe_id }}')">
-                I made this
-            </button>
         </div>
         {% endfor %}
 
@@ -33,10 +34,15 @@
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
             {% if recipe.get('liked') == True %}
-                <p><strong>Status:</strong> You've made this and you liked it!</p>
+                <p class="status-bubble">You've made this and liked it!</p>
             {% else %}
-                <p><strong>Status:</strong> You've made this and you did not like it.</p>
+                <p class="status-bubble">You've made this and didn't like it.</p>
             {% endif %}
+            <!-- Reset then Remove to ensure Remove is at the bottom -->
+            <form action="{{ url_for('reset_recipe') }}" method="post">
+                <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
+                <button type="submit" class="reset-btn">Reset</button>
+            </form>
             <form action="{{ url_for('unsave_made_recipe') }}" method="post">
                 <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
                 <button type="submit" class="remove-btn">Remove</button>
@@ -51,8 +57,7 @@
 <!-- Modal Structure -->
 <div id="madeModal" class="modal" style="display: none;">
     <div class="modal-content">
-        <h2>Did you like this recipe?</h2>
-        <p>Choose an option:</p>
+        <h2>Did you like it?</h2>
         <div class="modal-actions">
             <button type="button" class="yes-btn" onclick="submitMadeChoice(true)">Yes</button>
             <button type="button" class="no-btn" onclick="submitMadeChoice(false)">No</button>
@@ -66,7 +71,7 @@
     function openModal(recipeId) {
         selectedRecipeId = recipeId;
         const modal = document.getElementById('madeModal');
-        modal.style.display = 'block';
+        modal.style.display = 'flex';
     }
 
     function submitMadeChoice(liked) {
@@ -84,16 +89,55 @@
             if (data.success) {
                 const cardElement = document.getElementById("recipe-" + selectedRecipeId);
                 if (cardElement) {
+                    const markBtn = cardElement.querySelector(".mark-made-btn");
+                    if (markBtn) {
+                        markBtn.remove();
+                    }
+                    // Create the status bubble
+                    const statusBubble = document.createElement('p');
+                    statusBubble.className = 'status-bubble';
+                    statusBubble.textContent = data.liked 
+                        ? "You've made this and liked it!"
+                        : "You've made this and didn't like it.";
+                    cardElement.appendChild(statusBubble);
+
+                    // Apply the appropriate made class
                     if (data.liked) {
                         cardElement.classList.add("made-liked");
-                        cardElement.querySelector(".mark-made-btn").textContent = "You've made this and liked it!";
                     } else {
                         cardElement.classList.add("made-disliked");
-                        cardElement.querySelector(".mark-made-btn").textContent = "You've made this and didn't like it.";
                     }
-                    const btn = cardElement.querySelector(".mark-made-btn");
-                    btn.disabled = true;
-                    btn.style.cursor = "default";
+
+                    // Add reset and remove forms for consistency, remove at bottom
+                    const resetForm = document.createElement('form');
+                    resetForm.action = "{{ url_for('reset_recipe') }}";
+                    resetForm.method = "post";
+                    const resetInput = document.createElement('input');
+                    resetInput.type = 'hidden';
+                    resetInput.name = 'recipe_id';
+                    resetInput.value = selectedRecipeId;
+                    resetForm.appendChild(resetInput);
+                    const resetButton = document.createElement('button');
+                    resetButton.type = 'submit';
+                    resetButton.className = 'reset-btn';
+                    resetButton.textContent = 'Reset';
+                    resetForm.appendChild(resetButton);
+                    cardElement.appendChild(resetForm);
+
+                    const removeForm = document.createElement('form');
+                    removeForm.action = "{{ url_for('unsave_made_recipe') }}";
+                    removeForm.method = "post";
+                    const removeInput = document.createElement('input');
+                    removeInput.type = 'hidden';
+                    removeInput.name = 'recipe_id';
+                    removeInput.value = selectedRecipeId;
+                    removeForm.appendChild(removeInput);
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'submit';
+                    removeButton.className = 'remove-btn';
+                    removeButton.textContent = 'Remove';
+                    removeForm.appendChild(removeButton);
+                    cardElement.appendChild(removeForm);
                 }
             } else {
                 console.error("Failed to mark recipe as made:", data.message);
