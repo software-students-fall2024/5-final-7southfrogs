@@ -75,7 +75,6 @@ h1, h2 {
     color: #fff;
     font-weight: 600;
     margin-bottom: 20px;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -143,7 +142,7 @@ button:hover, .back-home:hover, a:hover {
     outline: none;
 }
 
-/* Centering the pantry input and button inside a boxed form */
+/* Center the pantry form elements */
 .boxed-form form {
     display: flex;
     justify-content: center;
@@ -169,17 +168,19 @@ button:hover, .back-home:hover, a:hover {
 }
 
 .recipe-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: white;
+    border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding-bottom: 20px;
 }
 
 .recipe-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0,0,0,0.2);
 }
 
 .recipe-card img {
@@ -189,16 +190,33 @@ button:hover, .back-home:hover, a:hover {
     border-bottom: 2px solid #ff758c;
 }
 
+/* Gradient text title without webkit prefix */
 .recipe-card h2 {
-    color: rgba(160, 43, 43, 0.674);
+    font-size: 1.2rem;
     margin: 10px 0;
+    background: linear-gradient(90deg, #b03060, #ff5c8a);
+    background-clip: text;
+    color: transparent;
 }
 
 .recipe-card p {
-    color: #ddd;
-    font-size: 0.8rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0;
 }
 
+/* View Full Recipe text white, pink on hover */
+.recipe-card p a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.recipe-card p a:hover {
+    color: #ff5c8a;
+}
+
+/* Buttons inside recipe cards */
 .recipe-card button {
     background: linear-gradient(90deg, #800080, #b03060);
     padding: 8px 15px;
@@ -255,7 +273,8 @@ button:hover, .back-home:hover, a:hover {
     background: linear-gradient(135deg, #28a745, #34d058);
     color: white;
     transition: all 0.4s ease-in-out;
-    box-shadow: 0 8px 15px rgba(40, 167, 69, 0.5);
+    box-shadow: 0 8px 15px rgba(40,167,69,0.5);
+    border: none;
 }
 
 .recipe-card.made h2, 
