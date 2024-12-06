@@ -5,6 +5,9 @@
 ## Project Description
 What's Cookin' is a user-friendly web application designed to simplify meal planning and recipe discovery. Users can create an account, manage their pantry, set dietary preferences, and search for recipes tailored to their needs. With features like saving favorite recipes, marking meals as "made," and detailed nutritional information, What's Cookin' makes cooking accessible, personalized, and fun. Perfect for home cooks looking to maximize what they have and minimize waste!
 
+## DockerHub Container Images
+[Link to DockerHub](https://hub.docker.com/repositories/dave147)
+
 ## Team Members
 - [Alex Ruan](https://github.com/axruan)
 - [Angela Zhang](https://github.com/angelazzh)
