@@ -1,4 +1,5 @@
 [![Web App CI/CD Pipeline](https://github.com/software-students-fall2024/5-final-7southfrogs/actions/workflows/web-app.yml/badge.svg)](https://github.com/software-students-fall2024/5-final-7southfrogs/actions/workflows/web-app.yml)
+[![MongoDB CI/CD Pipeline](https://github.com/software-students-fall2024/5-final-7southfrogs/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-fall2024/5-final-7southfrogs/actions/workflows/mongodb.yml)
 
 # Final Project- What's Cookin 🍳✨
 
