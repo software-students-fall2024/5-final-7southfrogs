@@ -18,12 +18,20 @@ nav {
     color: white;
     padding: 15px 20px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center; 
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
     position: sticky;
     top: 0;
     z-index: 1000;
+    position: relative;
+}
+
+.brand {
+    position: absolute;
+    left: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 nav ul {
@@ -37,12 +45,19 @@ nav ul li a {
     text-decoration: none;
     padding: 10px 15px;
     border-radius: 5px;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease-in-out;
 }
 
-nav ul li a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ff5c8a;
+/* Logout link */
+.logout-link {
+    background: red;
+    color: white;
+    transition: all 0.4s ease-in-out;
+}
+.logout-link:hover {
+    background: white;
+    color: red;
+    box-shadow: none;
 }
 
 main {
@@ -71,7 +86,17 @@ h2 {
     font-size: 1.8rem;
 }
 
-/* Buttons */
+/* Home Content */
+.home-content {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.home-content h1, .home-content p, .home-content form {
+    margin-bottom: 20px;
+}
+
+/* Buttons and Links */
 button, .back-home, a {
     background: linear-gradient(90deg, #ff758c, #ff5c8a);
     color: white;
@@ -80,28 +105,30 @@ button, .back-home, a {
     border-radius: 30px;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     text-decoration: none;
     display: inline-block;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease-in-out;
+    box-shadow: none; /* No black box by default */
 }
 
 button:hover, .back-home:hover, a:hover {
-    background: linear-gradient(90deg, #b03060, #ff758c);
-    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
+    background: linear-gradient(90deg, #b03060, #ff5c8a);
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5); /* Pink glow on hover */
 }
 
-/* Forms */
-form {
-    margin: 20px auto;
-    max-width: 400px;
-    padding: 20px;
+/* Boxed Form (apply this class where you want the dark background and box-shadow) */
+.boxed-form {
     background: rgba(28, 34, 56, 0.95);
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    max-width: 600px; 
+    margin: 20px auto; 
+    /* No text-align: center here, so form contents can align left naturally */
 }
 
-form input, form select, form textarea {
+.boxed-form input, .boxed-form select, .boxed-form textarea {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
@@ -112,7 +139,7 @@ form input, form select, form textarea {
     transition: border-color 0.3s ease;
 }
 
-form input:focus, form select:focus, form textarea:focus {
+.boxed-form input:focus, .boxed-form select:focus, .boxed-form textarea:focus {
     border-color: #b03060;
     outline: none;
 }
@@ -163,10 +190,13 @@ form input:focus, form select:focus, form textarea:focus {
     color: white;
     cursor: pointer;
     margin: 5px;
+    transition: all 0.4s ease-in-out;
 }
 
 .recipe-card button:hover {
     background: linear-gradient(90deg, #b03060, #ff5c8a);
+    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
+    color: white;
 }
 
 /* Lists */
@@ -195,16 +225,18 @@ form input:focus, form select:focus, form textarea:focus {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease-in-out;
 }
 
 .list-item button:hover {
     background: linear-gradient(90deg, #b03060, #ff5c8a);
+    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
+    color: white;
 }
 
 /* Made Recipe Card */
 .recipe-card.made {
-    background: linear-gradient(135deg, #28a745, #34d058); /* Modern green gradient */
+    background: linear-gradient(135deg, #28a745, #34d058);
     color: white;
     transition: all 0.4s ease-in-out;
     box-shadow: 0 8px 15px rgba(40, 167, 69, 0.5);
@@ -213,7 +245,7 @@ form input:focus, form select:focus, form textarea:focus {
 .recipe-card.made h2, 
 .recipe-card.made p, 
 .recipe-card.made a {
-    color: white; /* Ensure text and links are visible */
+    color: white;
 }
 
 .recipe-card.made button {
@@ -221,13 +253,60 @@ form input:focus, form select:focus, form textarea:focus {
     color: #28a745;
     border: 2px solid white;
     cursor: default;
+    transition: none;
 }
 
 .recipe-card.made button:hover {
     background: white;
     color: #28a745;
-    box-shadow: none; /* No hover effect for buttons */
-    cursor: default; /* No pointer cursor for already made recipes */
+    box-shadow: none;
+    cursor: default;
 }
 
+/* Profile Container */
+.profile-container {
+    margin-top: 30px;
+    /* No text-align: center here, so form can be left-aligned */
+}
 
+/* Center only the profile heading */
+.profile-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Checkbox Grid Layout */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: start; /* Align grid to the left */
+    justify-items: start;   /* Left-align items within each cell */
+    text-align: left;       /* Left-align text */
+}
+
+/* Individual Checkbox Items */
+.checkbox-item {
+    display: flex;
+    align-items: start;
+    text-align: left;
+    justify-content: start;
+    gap: 10px;
+    /* Left alignment ensured by parent styles */
+}
+
+/* Checkbox Styling */
+.checkbox-item input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #b03060;
+    cursor: pointer;
+}
+
+/* Checkbox Labels */
+.checkbox-item label {
+    font-size: 1rem;
+    color: #e0e0e0;
+    user-select: none;
+    cursor: pointer;
+}

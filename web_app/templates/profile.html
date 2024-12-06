@@ -3,15 +3,19 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<h1>Your Profile</h1>
-<form action="/profile" method="post">
-    {% for label in health_labels %}
-    <div>
-        <input type="checkbox" id="{{ label.api_param }}" name="restrictions" value="{{ label.api_param }}"
-            {% if label.api_param in dietary_restrictions %}checked{% endif %}>
-        <label for="{{ label.api_param }}">{{ label.web_label }}</label>
-    </div>
-    {% endfor %}
-    <button type="submit">Save Preferences</button>
-</form>
+<div class="profile-container">
+    <h1>Your Profile</h1>
+    <form action="/profile" method="post" class="boxed-form">
+        <div class="checkbox-grid">
+            {% for label in health_labels %}
+                <div class="checkbox-item">
+                    <input type="checkbox" id="{{ label.api_param }}" name="restrictions" value="{{ label.api_param }}"
+                           {% if label.api_param in dietary_restrictions %}checked{% endif %}>
+                    <label for="{{ label.api_param }}">{{ label.web_label }}</label>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit">Save Preferences</button>
+    </form>
+</div>
 {% endblock %}
