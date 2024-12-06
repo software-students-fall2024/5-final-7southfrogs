@@ -332,7 +332,6 @@ def made_recipe():
 
     user = users_collection.find_one({"username": username})
 
-    # Find the recipe in the user's saved_recipes list
     user_saved_recipes = user.get("saved_recipes", [])
     recipe_to_move = None
     for recipe in user_saved_recipes:
@@ -341,12 +340,10 @@ def made_recipe():
             break
 
     if recipe_to_move:
-        # Remove from saved_recipes
         users_collection.update_one(
             {"username": username},
             {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}},
         )
-        # Add to made_recipes
         users_collection.update_one(
             {"username": username}, {"$addToSet": {"made_recipes": recipe_to_move}}
         )
