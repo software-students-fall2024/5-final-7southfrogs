@@ -163,6 +163,7 @@ def profile():
         health_labels=HEALTH_LABELS,
     )
 
+
 @app.route("/search", methods=["GET"])
 @login_required
 def search_recipes():
@@ -185,6 +186,7 @@ def search_recipes():
     return render_template(
         "recipes.html", recipes=recipes, pantry_items=pantry_items
     )
+
 
 def fetch_recipes_from_api(pantry_items, dietary_restrictions):
     """Fetch recipes from the API based on pantry items and dietary restrictions."""
@@ -226,6 +228,7 @@ def fetch_recipes_from_api(pantry_items, dietary_restrictions):
     except requests.exceptions.RequestException as e:
         flash(f"An error occurred while fetching recipes: {str(e)}")
         return []
+
 
 @app.route("/pantry", methods=["GET", "POST"])
 @login_required
@@ -323,14 +326,21 @@ def get_recipe_details(recipe_id):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/made_recipes", methods=["POST"])
+@app.route("/made_recipe", methods=["POST"])
 @login_required
 def made_recipe():
-    """Mark a recipe as made."""
+    """Mark a recipe as made, including whether the user liked it or not."""
     username = session["username"]
-    recipe_id = request.form.get("recipe_id")
+    data = request.get_json()
+    recipe_id = data.get("recipe_id")
+    liked = data.get("liked", False)
+
+    if not recipe_id:
+        return jsonify({"success": False, "message": "No recipe_id provided."}), 400
 
     user = users_collection.find_one({"username": username})
+    if not user:
+        return jsonify({"success": False, "message": "User not found."}), 404
 
     user_saved_recipes = user.get("saved_recipes", [])
     recipe_to_move = None
@@ -339,22 +349,26 @@ def made_recipe():
             recipe_to_move = recipe
             break
 
-    if recipe_to_move:
-        users_collection.update_one(
-            {"username": username},
-            {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}},
-        )
-        users_collection.update_one(
-            {"username": username}, {"$addToSet": {"made_recipes": recipe_to_move}}
-        )
-        flash("Recipe marked as made.")
-    else:
-        flash("Recipe not found in saved recipes.")
+    if not recipe_to_move:
+        return jsonify({"success": False, "message": "Recipe not found in saved recipes."}), 404
 
-    return redirect(url_for("saved_recipes"))
+    # Add liked status
+    recipe_to_move["liked"] = liked
+
+    # Remove from saved_recipes and add to made_recipes
+    users_collection.update_one(
+        {"username": username},
+        {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}}
+    )
+    users_collection.update_one(
+        {"username": username},
+        {"$addToSet": {"made_recipes": recipe_to_move}}
+    )
+
+    return jsonify({"success": True, "message": "Recipe marked as made.", "liked": liked}), 200
 
 
-@app.route("/unmade_made_recipe", methods=["POST"])
+@app.route("/unsave_made_recipe", methods=["POST"])
 @login_required
 def unsave_made_recipe():
     """Remove a recipe from made_recipes."""

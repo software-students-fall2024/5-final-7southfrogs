@@ -18,7 +18,7 @@
                 <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
                 <button type="submit" class="remove-btn">Remove</button>
             </form>
-            <button type="button" class="mark-made-btn" onclick="markAsMade(this.closest('.recipe-card'))">
+            <button type="button" class="mark-made-btn" onclick="openModal('{{ recipe.recipe_id }}')">
                 I made this
             </button>
         </div>
@@ -26,12 +26,17 @@
 
         <!-- Made recipes -->
         {% for recipe in made_recipes %}
-        <div class="recipe-card made" id="made-recipe-{{ recipe.recipe_id }}">
+        {% set made_class = 'made-liked' if recipe.get('liked') == True else 'made-disliked' %}
+        <div class="recipe-card {{ made_class }}" id="made-recipe-{{ recipe.recipe_id }}">
             <img src="{{ recipe.image }}" alt="{{ recipe.name }}">
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
-            <p><strong>Status:</strong> You've made this!</p>
+            {% if recipe.get('liked') == True %}
+                <p><strong>Status:</strong> You've made this and you liked it!</p>
+            {% else %}
+                <p><strong>Status:</strong> You've made this and you did not like it.</p>
+            {% endif %}
             <form action="{{ url_for('unsave_made_recipe') }}" method="post">
                 <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
                 <button type="submit" class="remove-btn">Remove</button>
@@ -43,24 +48,73 @@
     <p>You have no saved recipes.</p>
 {% endif %}
 
-<script>
-    function markAsMade(cardElement) {
-        cardElement.classList.add("made");
-        const button = cardElement.querySelector(".mark-made-btn");
-        button.textContent = "You've made this!";
-        button.disabled = true;
-        button.style.cursor = "default";
+<!-- Modal Structure -->
+<div id="madeModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <h2>Did you like this recipe?</h2>
+        <p>Choose an option:</p>
+        <div class="modal-actions">
+            <button type="button" class="yes-btn" onclick="submitMadeChoice(true)">Yes</button>
+            <button type="button" class="no-btn" onclick="submitMadeChoice(false)">No</button>
+        </div>
+    </div>
+</div>
 
-        const recipeId = cardElement.id.split("-")[1];
+<script>
+    let selectedRecipeId = null;
+
+    function openModal(recipeId) {
+        selectedRecipeId = recipeId;
+        const modal = document.getElementById('madeModal');
+        modal.style.display = 'block';
+    }
+
+    function submitMadeChoice(liked) {
+        if (!selectedRecipeId) return;
+
         fetch("/made_recipe", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ recipe_id: recipeId }),
-        }).catch((error) => {
+            body: JSON.stringify({ recipe_id: selectedRecipeId, liked: liked }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const cardElement = document.getElementById("recipe-" + selectedRecipeId);
+                if (cardElement) {
+                    if (data.liked) {
+                        cardElement.classList.add("made-liked");
+                        cardElement.querySelector(".mark-made-btn").textContent = "You've made this and liked it!";
+                    } else {
+                        cardElement.classList.add("made-disliked");
+                        cardElement.querySelector(".mark-made-btn").textContent = "You've made this and didn't like it.";
+                    }
+                    const btn = cardElement.querySelector(".mark-made-btn");
+                    btn.disabled = true;
+                    btn.style.cursor = "default";
+                }
+            } else {
+                console.error("Failed to mark recipe as made:", data.message);
+            }
+        })
+        .catch((error) => {
             console.error("Error updating recipe as made:", error);
+        })
+        .finally(() => {
+            const modal = document.getElementById('madeModal');
+            modal.style.display = 'none';
+            selectedRecipeId = null;
         });
+    }
+
+    // Close modal when clicking outside it (optional)
+    window.onclick = function(event) {
+        const modal = document.getElementById('madeModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
     }
 </script>
 {% endblock %}
