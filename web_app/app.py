@@ -1,7 +1,3 @@
-"""
-This module defines the Flask application and its routes.
-"""
-
 import os
 import logging
 from flask import (
@@ -39,28 +35,23 @@ logging.basicConfig(level=logging.INFO)
 
 
 def login_required(func):
-    """Decorator to ensure the user is logged in before accessing a route."""
-
     def wrapper(*args, **kwargs):
         if "username" not in session:
             flash("Please log in to access this page.")
             return redirect(url_for("login"))
         return func(*args, **kwargs)
-
     wrapper.__name__ = func.__name__
     return wrapper
 
 
 @app.route("/")
 def home():
-    """Render the main home page."""
     username = session.get("username")
     return render_template("home.html", username=username)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log in page for registered users."""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"].encode("utf-8")
@@ -76,7 +67,6 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Registration page for new users."""
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"].encode("utf-8")
@@ -95,7 +85,6 @@ def register():
 
 @app.route("/logout")
 def logout():
-    """Logs user out and clears session."""
     session.clear()
     return redirect(url_for("login"))
 
@@ -142,7 +131,6 @@ HEALTH_LABELS = [
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
-    """Render and update the user's dietary restrictions."""
     username = session["username"]
 
     if request.method == "POST":
@@ -163,10 +151,10 @@ def profile():
         health_labels=HEALTH_LABELS,
     )
 
+
 @app.route("/search", methods=["GET"])
 @login_required
 def search_recipes():
-    """Search for recipes based on pantry items and dietary restrictions."""
     username = session["username"]
 
     user = users_collection.find_one({"username": username})
@@ -186,8 +174,8 @@ def search_recipes():
         "recipes.html", recipes=recipes, pantry_items=pantry_items
     )
 
+
 def fetch_recipes_from_api(pantry_items, dietary_restrictions):
-    """Fetch recipes from the API based on pantry items and dietary restrictions."""
     recipes_dict = {}
     common_params = {
         "type": "public",
@@ -227,10 +215,10 @@ def fetch_recipes_from_api(pantry_items, dietary_restrictions):
         flash(f"An error occurred while fetching recipes: {str(e)}")
         return []
 
+
 @app.route("/pantry", methods=["GET", "POST"])
 @login_required
 def pantry():
-    """Render and update the user's pantry."""
     username = session["username"]
 
     if request.method == "POST":
@@ -250,7 +238,6 @@ def pantry():
 @app.route("/pantry/delete", methods=["POST"])
 @login_required
 def delete_pantry_item():
-    """Remove an ingredient from the pantry."""
     username = session["username"]
     ingredient = request.form.get("ingredient")
     if ingredient:
@@ -264,7 +251,6 @@ def delete_pantry_item():
 @app.route("/save_recipe", methods=["POST"])
 @login_required
 def save_recipe():
-    """Saves a recipe to the user's saved_recipes list."""
     username = session["username"]
     recipe_data = request.json
 
@@ -275,9 +261,7 @@ def save_recipe():
 
     if user:
         user_saved_recipes = user.get("saved_recipes", [])
-        if isinstance(user_saved_recipes, list) and any(
-            recipe["recipe_id"] == recipe_data["recipe_id"] for recipe in user_saved_recipes
-        ):
+        if any(recipe["recipe_id"] == recipe_data["recipe_id"] for recipe in user_saved_recipes):
             return jsonify({"message": "Recipe already saved."}), 400
 
         users_collection.update_one(
@@ -291,7 +275,6 @@ def save_recipe():
 @app.route("/unsave_recipe", methods=["POST"])
 @login_required
 def unsave_recipe():
-    """Unsaves a recipe from the user's saved_recipes list."""
     username = session["username"]
     recipe_id = request.form.get("recipe_id")
 
@@ -305,7 +288,6 @@ def unsave_recipe():
 @app.route("/recipe/<recipe_id>", methods=["GET"])
 @login_required
 def get_recipe_details(recipe_id):
-    """Fetch and return recipe details for the modal."""
     try:
         response = requests.get(
             f"{EDAMAM_BASE_URL}/{recipe_id}",
@@ -323,14 +305,20 @@ def get_recipe_details(recipe_id):
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/made_recipes", methods=["POST"])
+@app.route("/made_recipe", methods=["POST"])
 @login_required
 def made_recipe():
-    """Mark a recipe as made."""
     username = session["username"]
-    recipe_id = request.form.get("recipe_id")
+    data = request.get_json()
+    recipe_id = data.get("recipe_id")
+    liked = data.get("liked", False)
+
+    if not recipe_id:
+        return jsonify({"success": False, "message": "No recipe_id provided."}), 400
 
     user = users_collection.find_one({"username": username})
+    if not user:
+        return jsonify({"success": False, "message": "User not found."}), 404
 
     user_saved_recipes = user.get("saved_recipes", [])
     recipe_to_move = None
@@ -339,25 +327,26 @@ def made_recipe():
             recipe_to_move = recipe
             break
 
-    if recipe_to_move:
-        users_collection.update_one(
-            {"username": username},
-            {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}},
-        )
-        users_collection.update_one(
-            {"username": username}, {"$addToSet": {"made_recipes": recipe_to_move}}
-        )
-        flash("Recipe marked as made.")
-    else:
-        flash("Recipe not found in saved recipes.")
+    if not recipe_to_move:
+        return jsonify({"success": False, "message": "Recipe not found in saved recipes."}), 404
 
-    return redirect(url_for("saved_recipes"))
+    recipe_to_move["liked"] = liked
+
+    users_collection.update_one(
+        {"username": username},
+        {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}}
+    )
+    users_collection.update_one(
+        {"username": username},
+        {"$addToSet": {"made_recipes": recipe_to_move}}
+    )
+
+    return jsonify({"success": True, "message": "Recipe marked as made.", "liked": liked}), 200
 
 
-@app.route("/unmade_made_recipe", methods=["POST"])
+@app.route("/unsave_made_recipe", methods=["POST"])
 @login_required
 def unsave_made_recipe():
-    """Remove a recipe from made_recipes."""
     username = session["username"]
     recipe_id = request.form.get("recipe_id")
 
@@ -367,11 +356,44 @@ def unsave_made_recipe():
     flash("Recipe removed from made recipes.")
     return redirect(url_for("saved_recipes"))
 
+@app.route("/reset_recipe", methods=["POST"])
+@login_required
+def reset_recipe():
+    username = session["username"]
+    recipe_id = request.form.get("recipe_id")
+
+    user = users_collection.find_one({"username": username})
+    if not user:
+        flash("User not found.")
+        return redirect(url_for("saved_recipes"))
+
+    made_recipes = user.get("made_recipes", [])
+    recipe_to_reset = None
+    for recipe in made_recipes:
+        if recipe["recipe_id"] == recipe_id:
+            recipe_to_reset = recipe
+            break
+
+    if recipe_to_reset:
+        recipe_to_reset.pop("liked", None)
+        users_collection.update_one(
+            {"username": username},
+            {"$pull": {"made_recipes": {"recipe_id": recipe_id}}}
+        )
+        users_collection.update_one(
+            {"username": username},
+            {"$push": {"saved_recipes": recipe_to_reset}}
+        )
+        flash("Recipe reset to default state.")
+    else:
+        flash("Recipe not found in made recipes.")
+
+    return redirect(url_for("saved_recipes"))
+
 
 @app.route("/saved_recipes")
 @login_required
 def saved_recipes():
-    """Render all saved and made recipes."""
     username = session["username"]
     user = users_collection.find_one({"username": username})
 

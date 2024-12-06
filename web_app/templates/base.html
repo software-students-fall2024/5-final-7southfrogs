@@ -8,12 +8,13 @@
 </head>
 <body>
     <nav>
+        <div class="brand">What's Cookin</div>
         <ul>
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('profile') }}">Profile</a></li>
             <li><a href="{{ url_for('pantry') }}">Pantry</a></li>
             <li><a href="{{ url_for('saved_recipes') }}">Saved Recipes</a></li>
-            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            <li><a class="logout-link" href="{{ url_for('logout') }}">Logout</a></li>
         </ul>
     </nav>
     <main>

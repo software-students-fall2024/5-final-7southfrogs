@@ -255,13 +255,21 @@
     .modal-content {
         padding: 20px;
         position: relative;
+        color: #000; /* Modal text black */
     }
 
-    .modal-content h2 {
+    /* Modal Title Gradient (no webkit) */
+    .modal-content h2#modal-title {
         margin-top: 0;
+        text-align: center;
+        background: linear-gradient(90deg, #b03060, #ff5c8a);
+        background-clip: text; /* May not show gradient in all browsers without -webkit */
+        color: transparent;    /* Make the text transparent so background shows through */
     }
 
     .modal-content img {
+        display: block; /* Make image a block element */
+        margin: 20px auto; /* Center the image horizontally */
         max-width: 100%;
         height: auto;
         border-radius: 5px;
@@ -295,3 +303,4 @@
     }
 </style>
 {% endblock %}
+
