@@ -4,10 +4,12 @@
 
 {% block content %}
 <h1>Your Pantry</h1>
-<form action="{{ url_for('pantry') }}" method="post">
-    <input type="text" name="ingredient" placeholder="Add an ingredient" required>
-    <button type="submit">Add</button>
-</form>
+<div class="boxed-form">
+    <form action="{{ url_for('pantry') }}" method="post">
+        <input type="text" name="ingredient" placeholder="Add an ingredient" required>
+        <button type="submit">Add</button>
+    </form>
+</div>
 
 {% if pantry_items %}
     <div class="list-container">

@@ -18,12 +18,20 @@ nav {
     color: white;
     padding: 15px 20px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center; 
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
     position: sticky;
     top: 0;
     z-index: 1000;
+    position: relative;
+}
+
+.brand {
+    position: absolute;
+    left: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 nav ul {
@@ -37,12 +45,19 @@ nav ul li a {
     text-decoration: none;
     padding: 10px 15px;
     border-radius: 5px;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease-in-out;
 }
 
-nav ul li a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ff5c8a;
+/* Logout link */
+.logout-link {
+    background: red;
+    color: white;
+    transition: all 0.4s ease-in-out;
+}
+.logout-link:hover {
+    background: #cc0000;
+    color: white;
+    box-shadow: none;
 }
 
 main {
@@ -60,7 +75,6 @@ h1, h2 {
     color: #fff;
     font-weight: 600;
     margin-bottom: 20px;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
@@ -71,7 +85,17 @@ h2 {
     font-size: 1.8rem;
 }
 
-/* Buttons */
+/* Home Content */
+.home-content {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.home-content h1, .home-content p, .home-content form {
+    margin-bottom: 20px;
+}
+
+/* Buttons and Links */
 button, .back-home, a {
     background: linear-gradient(90deg, #ff758c, #ff5c8a);
     color: white;
@@ -80,41 +104,107 @@ button, .back-home, a {
     border-radius: 30px;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
     text-decoration: none;
     display: inline-block;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease-in-out;
+    box-shadow: none;
 }
 
-button:hover, .back-home:hover, a:hover {
-    background: linear-gradient(90deg, #b03060, #ff758c);
+/* Exclude yes-btn and no-btn from universal hover */
+button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-home:hover, a:hover {
+    background: linear-gradient(90deg, #b03060, #ff5c8a);
+    color: white;
     box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
 }
 
-/* Forms */
-form {
-    margin: 20px auto;
-    max-width: 400px;
-    padding: 20px;
+/* Remove button red */
+.remove-btn {
+    background: red;
+    color: white;
+    border: none;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.4s ease-in-out;
+}
+
+.remove-btn:hover {
+    background: #cc0000;
+    color: white;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+/* Reset button (Orange/Yellow) */
+.reset-btn {
+    background: #ffaa00;
+    color: black;
+    border: none;
+    margin: 5px;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.4s ease-in-out;
+}
+
+.reset-btn:hover {
+    background: linear-gradient(90deg, #e6b800, #e69900);
+    box-shadow: 0 8px 20px rgba(230, 184, 0, 0.5);
+    color: black;
+}
+
+/* Boxed Form */
+.boxed-form {
     background: rgba(28, 34, 56, 0.95);
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: left;
 }
 
-form input, form select, form textarea {
-    width: 100%;
+/* Removed the flex layout from the form to ensure proper vertical stacking */
+/* .boxed-form form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+} */
+
+.boxed-form form {
+    margin-top: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    color: #e0e0e0;
+}
+
+.boxed-form input, .boxed-form select, .boxed-form textarea {
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #444;
     border-radius: 8px;
-    background: #1a1f36;
-    color: white;
+    background: white;
+    color: black;
     transition: border-color 0.3s ease;
 }
 
-form input:focus, form select:focus, form textarea:focus {
+.boxed-form input:focus, .boxed-form select:focus, .boxed-form textarea:focus {
     border-color: #b03060;
     outline: none;
+}
+
+/* Ensure proper width on inputs */
+.boxed-form input[type="text"],
+.boxed-form input[type="password"] {
+    width: 100%;
 }
 
 /* Recipe Cards */
@@ -126,17 +216,19 @@ form input:focus, form select:focus, form textarea:focus {
 }
 
 .recipe-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: white;
+    border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding-bottom: 20px;
 }
 
 .recipe-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0,0,0,0.2);
 }
 
 .recipe-card img {
@@ -147,26 +239,28 @@ form input:focus, form select:focus, form textarea:focus {
 }
 
 .recipe-card h2 {
-    color: rgba(160, 43, 43, 0.674);
+    font-size: 1.2rem;
     margin: 10px 0;
+    background: linear-gradient(90deg, #b03060, #ff5c8a);
+    background-clip: text;
+    color: transparent;
 }
 
 .recipe-card p {
-    color: #ddd;
-    font-size: 0.8rem;
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0;
 }
 
-.recipe-card button {
-    background: linear-gradient(90deg, #800080, #b03060);
-    padding: 8px 15px;
-    border-radius: 20px;
+/* View Full Recipe text white, pink on hover */
+.recipe-card p a {
     color: white;
-    cursor: pointer;
-    margin: 5px;
+    text-decoration: none;
+    transition: color 0.3s;
 }
 
-.recipe-card button:hover {
-    background: linear-gradient(90deg, #b03060, #ff5c8a);
+.recipe-card p a:hover {
+    color: #ff5c8a;
 }
 
 /* Lists */
@@ -195,39 +289,175 @@ form input:focus, form select:focus, form textarea:focus {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease-in-out;
 }
 
 .list-item button:hover {
     background: linear-gradient(90deg, #b03060, #ff5c8a);
-}
-
-/* Made Recipe Card */
-.recipe-card.made {
-    background: linear-gradient(135deg, #28a745, #34d058);
-    color: white;
-    transition: all 0.4s ease-in-out;
-    box-shadow: 0 8px 15px rgba(40, 167, 69, 0.5);
-}
-
-.recipe-card.made h2, 
-.recipe-card.made p, 
-.recipe-card.made a {
+    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
     color: white;
 }
 
-.recipe-card.made button {
-    background: white;
-    color: #28a745;
-    border: 2px solid white;
-    cursor: default;
+/* New classes for Liked/Disliked recipes */
+.recipe-card.made-liked {
+    background: linear-gradient(to bottom, #b2f2bb, #63e6be);
+    color: black;
+    border: none;
+    box-shadow: 0 8px 15px rgba(98, 182, 138, 0.5);
 }
 
-.recipe-card.made button:hover {
+.recipe-card.made-disliked {
+    background: linear-gradient(to bottom, #ffa8a8, #ff6b6b);
+    color: black;
+    border: none;
+    box-shadow: 0 8px 15px rgba(255, 107, 107, 0.5);
+}
+
+.recipe-card.made-liked h2, .recipe-card.made-liked p, .recipe-card.made-liked a,
+.recipe-card.made-disliked h2, .recipe-card.made-disliked p, .recipe-card.made-disliked a {
+    color: black; 
+}
+
+.recipe-card.made-liked button:hover,
+.recipe-card.made-disliked button:hover {
     background: white;
-    color: #28a745;
+    color: black;
     box-shadow: none;
-    cursor: default;
+    cursor: pointer;
 }
 
+/* Status Bubble */
+.status-bubble {
+    display: inline-block;
+    background: white;
+    color: black;
+    padding: 8px 15px;
+    border-radius: 20px;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* Profile Container */
+.profile-container {
+    margin-top: 30px;
+}
+
+/* Checkbox Container & Columns */
+.checkbox-container {
+    display: flex;
+    justify-content: start;
+    gap: 40px;
+}
+
+.checkbox-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: left;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    text-align: left;
+    justify-content: start;
+}
+
+.checkbox-item input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #b03060;
+    cursor: pointer;
+}
+
+.checkbox-item label {
+    font-size: 1rem;
+    color: #e0e0e0;
+    user-select: none;
+    cursor: pointer;
+}
+
+/* Center the "Save Preferences" button */
+.submit-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.4);
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff; 
+    padding: 20px; 
+    border-radius: 5px; 
+    text-align: center;
+    max-width: 300px;
+    width: 80%;
+}
+
+.modal-content h2 {
+    color: black;
+    margin-bottom: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Yes (Green) and No (Red) Buttons */
+.yes-btn {
+    background: linear-gradient(to bottom, #b2f2bb, #63e6be);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    box-shadow: 0 0 8px #63e6be;
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.no-btn {
+    background: linear-gradient(to bottom, #ffa8a8, #ff6b6b);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    box-shadow: 0 0 8px #ff6b6b;
+    transition: box-shadow 0.4s ease-in-out;
+}
+
+.yes-btn:hover {
+    background: linear-gradient(to bottom, #b2f2bb, #63e6be);
+    box-shadow: 0 0 15px 3px #63e6be;
+}
+
+.no-btn:hover {
+    background: linear-gradient(to bottom, #ffa8a8, #ff6b6b);
+    box-shadow: 0 0 15px 3px #ff6b6b;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.form-prompt {
+    text-align: center;
+    margin-top: 20px;
+}
 
