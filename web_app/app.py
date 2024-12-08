@@ -1,5 +1,5 @@
 """
-This is a module that defines the main Flask application for the web app, including
+This module defines the main Flask application for the web app, including
 routes for user authentication, profile management, pantry handling, and
 recipe searches.
 """
