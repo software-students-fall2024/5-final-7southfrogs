@@ -1,5 +1,5 @@
 """
-This module contains a few unit tests for the Flask application.
+This module contains a unit tests for the Flask application.
 """
 
 import pytest
