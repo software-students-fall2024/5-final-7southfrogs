@@ -44,6 +44,7 @@ def login_required(func):
     """
     Ensure that the user is logged in before accessing a page.
     """
+
     def wrapper(*args, **kwargs):
         """
         Wrapper
@@ -52,6 +53,7 @@ def login_required(func):
             flash("Please log in to access this page.")
             return redirect(url_for("login"))
         return func(*args, **kwargs)
+
     wrapper.__name__ = func.__name__
     return wrapper
 
@@ -200,9 +202,7 @@ def search_recipes():
         return render_template("recipes.html", recipes=[], query="")
 
     recipes = fetch_recipes_from_api(pantry_items, dietary_restrictions)
-    return render_template(
-        "recipes.html", recipes=recipes, pantry_items=pantry_items
-    )
+    return render_template("recipes.html", recipes=recipes, pantry_items=pantry_items)
 
 
 def fetch_recipes_from_api(pantry_items, dietary_restrictions):
@@ -303,7 +303,10 @@ def save_recipe():
 
     if user:
         user_saved_recipes = user.get("saved_recipes", [])
-        if any(recipe["recipe_id"] == recipe_data["recipe_id"] for recipe in user_saved_recipes):
+        if any(
+            recipe["recipe_id"] == recipe_data["recipe_id"]
+            for recipe in user_saved_recipes
+        ):
             return jsonify({"message": "Recipe already saved."}), 400
 
         users_collection.update_one(
@@ -379,20 +382,26 @@ def made_recipe():
             break
 
     if not recipe_to_move:
-        return jsonify({"success": False, "message": "Recipe not found in saved recipes."}), 404
+        return (
+            jsonify(
+                {"success": False, "message": "Recipe not found in saved recipes."}
+            ),
+            404,
+        )
 
     recipe_to_move["liked"] = liked
 
     users_collection.update_one(
-        {"username": username},
-        {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}}
+        {"username": username}, {"$pull": {"saved_recipes": {"recipe_id": recipe_id}}}
     )
     users_collection.update_one(
-        {"username": username},
-        {"$addToSet": {"made_recipes": recipe_to_move}}
+        {"username": username}, {"$addToSet": {"made_recipes": recipe_to_move}}
     )
 
-    return jsonify({"success": True, "message": "Recipe marked as made.", "liked": liked}), 200
+    return (
+        jsonify({"success": True, "message": "Recipe marked as made.", "liked": liked}),
+        200,
+    )
 
 
 @app.route("/unsave_made_recipe", methods=["POST"])
@@ -409,6 +418,7 @@ def unsave_made_recipe():
     )
     flash("Recipe removed from made recipes.")
     return redirect(url_for("saved_recipes"))
+
 
 @app.route("/reset_recipe", methods=["POST"])
 @login_required
@@ -435,11 +445,10 @@ def reset_recipe():
         recipe_to_reset.pop("liked", None)
         users_collection.update_one(
             {"username": username},
-            {"$pull": {"made_recipes": {"recipe_id": recipe_id}}}
+            {"$pull": {"made_recipes": {"recipe_id": recipe_id}}},
         )
         users_collection.update_one(
-            {"username": username},
-            {"$push": {"saved_recipes": recipe_to_reset}}
+            {"username": username}, {"$push": {"saved_recipes": recipe_to_reset}}
         )
         flash("Recipe reset to default state.")
     else:
