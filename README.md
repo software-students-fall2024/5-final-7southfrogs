@@ -15,7 +15,7 @@ What's Cookin' is a user-friendly web application designed to simplify meal plan
 - [Leo Bernarbezheng](https://github.com/leonaurdo)
 - [David Lai](https://github.com/danonymouse)
 
-## How to Run the Project
+## How to Run the Project 🚀
 
 ### **Prerequisites**
 1. **Python:** Ensure you have Python 3.10 or higher installed.
