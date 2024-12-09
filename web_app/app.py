@@ -41,6 +41,10 @@ logging.basicConfig(level=logging.INFO)
 
 @app.context_processor
 def inject_user():
+    """
+    Inject the current user's username into the context for all templates.
+    """
+    
     username = session.get('username')
     return dict(username=username)
 
