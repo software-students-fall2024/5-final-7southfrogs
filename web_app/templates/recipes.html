@@ -22,8 +22,8 @@
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
-            <button onclick="openModal('{{ recipe.recipe_id }}')">More Info</button>
-            <button onclick="saveRecipe(
+            <button id="more-info-btn" onclick="openModal('{{ recipe.recipe_id }}')">More Info</button>
+            <button id="save-recipe-btn" onclick="saveRecipe(
                 '{{ recipe.recipe_id }}',
                 '{{ recipe.name }}',
                 '{{ recipe.image }}',

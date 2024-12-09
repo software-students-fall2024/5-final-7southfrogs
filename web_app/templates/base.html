@@ -14,7 +14,9 @@
             <li><a href="{{ url_for('profile') }}">Profile</a></li>
             <li><a href="{{ url_for('pantry') }}">Pantry</a></li>
             <li><a href="{{ url_for('saved_recipes') }}">Saved Recipes</a></li>
-            <li><a class="logout-link" href="{{ url_for('logout') }}">Logout</a></li>
+            {% if username %}
+                <li><a class="logout-link" href="{{ url_for('logout') }}">Logout</a></li>
+            {% endif %}
         </ul>
     </nav>
     <main>

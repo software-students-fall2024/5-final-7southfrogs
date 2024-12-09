@@ -33,11 +33,6 @@
             <h2 class="recipe-title">{{ recipe.name }}</h2>
             <p><strong>Source:</strong> {{ recipe.source }}</p>
             <p><a href="{{ recipe.url }}" target="_blank">View Full Recipe</a></p>
-            {% if recipe.get('liked') == True %}
-                <p class="status-bubble">You've made this and liked it!</p>
-            {% else %}
-                <p class="status-bubble">You've made this and didn't like it.</p>
-            {% endif %}
             <!-- Reset then Remove to ensure Remove is at the bottom -->
             <form action="{{ url_for('reset_recipe') }}" method="post">
                 <input type="hidden" name="recipe_id" value="{{ recipe.recipe_id }}">
@@ -93,13 +88,6 @@
                     if (markBtn) {
                         markBtn.remove();
                     }
-                    // Create the status bubble
-                    const statusBubble = document.createElement('p');
-                    statusBubble.className = 'status-bubble';
-                    statusBubble.textContent = data.liked 
-                        ? "You've made this and liked it!"
-                        : "You've made this and didn't like it.";
-                    cardElement.appendChild(statusBubble);
 
                     // Apply the appropriate made class
                     if (data.liked) {
@@ -124,20 +112,20 @@
                     resetForm.appendChild(resetButton);
                     cardElement.appendChild(resetForm);
 
-                    const removeForm = document.createElement('form');
-                    removeForm.action = "{{ url_for('unsave_made_recipe') }}";
-                    removeForm.method = "post";
-                    const removeInput = document.createElement('input');
-                    removeInput.type = 'hidden';
-                    removeInput.name = 'recipe_id';
-                    removeInput.value = selectedRecipeId;
-                    removeForm.appendChild(removeInput);
-                    const removeButton = document.createElement('button');
-                    removeButton.type = 'submit';
-                    removeButton.className = 'remove-btn';
-                    removeButton.textContent = 'Remove';
-                    removeForm.appendChild(removeButton);
-                    cardElement.appendChild(removeForm);
+                    // const removeForm = document.createElement('form');
+                    // removeForm.action = "{{ url_for('unsave_made_recipe') }}";
+                    // removeForm.method = "post";
+                    // const removeInput = document.createElement('input');
+                    // removeInput.type = 'hidden';
+                    // removeInput.name = 'recipe_id';
+                    // removeInput.value = selectedRecipeId;
+                    // removeForm.appendChild(removeInput);
+                    // const removeButton = document.createElement('button');
+                    // removeButton.type = 'submit';
+                    // removeButton.className = 'remove-btn';
+                    // removeButton.textContent = 'Remove';
+                    // removeForm.appendChild(removeButton);
+                    // cardElement.appendChild(removeForm);
                 }
             } else {
                 console.error("Failed to mark recipe as made:", data.message);
