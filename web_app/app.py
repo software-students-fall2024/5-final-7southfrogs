@@ -40,6 +40,16 @@ EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2"
 logging.basicConfig(level=logging.INFO)
 
 
+@app.context_processor
+def inject_user():
+    """
+    Inject the current user's username into the context for all templates.
+    """
+
+    username = session.get("username")
+    return {"username": username}
+
+
 def login_required(func):
     """
     Ensure that the user is logged in before accessing a page.
