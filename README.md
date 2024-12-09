@@ -50,6 +50,7 @@ What's Cookin' is a user-friendly web application designed to simplify meal plan
     ```
 - Wait for the containers to build and start.
 - Open your browser and navigate to http://localhost:5000 to access the web app.
+- What's Cookin is also deployed through Digital Ocean, at http://157.230.85.234:5000/login
 
 ### **Navigating What's Cookin'**
 - Register an account and log in.
