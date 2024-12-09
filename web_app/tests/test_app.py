@@ -4,6 +4,7 @@ This module contains a unit tests for the Flask application.
 
 import pytest
 from app import app, users_collection
+from unittest.mock import patch
 
 
 @pytest.fixture
@@ -18,9 +19,8 @@ def client():
     with app.test_client() as client:
         with app.app_context():
             test_users_collection.delete_many({})
-        yield client
+            yield client  # Indent to be within app.app_context()
 
-    with app.app_context():
         test_users_collection.drop()
 
 
@@ -49,6 +49,7 @@ def test_register_existing_user(client, test_users):
 
 
 def test_login_failure(client):
+    """Test login failure with incorrect credentials."""
     response = client.post(
         "/login",
         data={"username": "wronguser", "password": "wrongpassword"},
@@ -136,19 +137,21 @@ def test_search_recipes_with_pantry(client, test_users):
 
 def test_mark_recipe_as_made(client):
     """Test marking a recipe as made."""
-    with client.session_transaction() as sess:
-        sess["username"] = "testuser"
-    users_collection.insert_one(
-        {
-            "username": "testuser",
-            "saved_recipes": [{"recipe_id": "recipe123", "name": "Test Recipe"}],
-        }
-    )
-    response = client.post(
-        "/made_recipes", data={"recipe_id": "recipe123"}, follow_redirects=True
-    )
-    assert response.status_code == 200
-    assert response.status_code == 200
+    with patch("app.users_collection", app.config["TEST_USERS_COLLECTION"]):
+        with client.session_transaction() as sess:
+            sess["username"] = "testuser"
+        app.config["TEST_USERS_COLLECTION"].insert_one(
+            {
+                "username": "testuser",
+                "saved_recipes": [{"recipe_id": "recipe123", "name": "Test Recipe"}],
+            }
+        )
+        response = client.post(
+            "/made_recipe",
+            json={"recipe_id": "recipe123", "liked": False},
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
 
 
 def test_remove_made_recipe(client, test_users):
@@ -162,7 +165,7 @@ def test_remove_made_recipe(client, test_users):
         }
     )
     response = client.post(
-        "/unmade_made_recipe", data={"recipe_id": "recipe123"}, follow_redirects=True
+        "/unsave_made_recipe", data={"recipe_id": "recipe123"}, follow_redirects=True
     )
     assert response.status_code == 200
 

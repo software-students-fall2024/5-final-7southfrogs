@@ -26,12 +26,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pylint black
+      
+      - name: Format code with Black
+        run: black web_app/
 
       - name: Run linting
         run: pylint web_app/app.py
-
-      - name: Format code with Black
-        run: black web_app/
+      
+      - name: Run tests with pytest
+        run: pytest
 
       - name: Log in to DockerHub
         uses: docker/login-action@v2
