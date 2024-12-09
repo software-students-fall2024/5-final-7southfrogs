@@ -15,7 +15,7 @@ What's Cookin' is a user-friendly web application designed to simplify meal plan
 - [Leo Bernarbezheng](https://github.com/leonaurdo)
 - [David Lai](https://github.com/danonymouse)
 
-## How to Run the Project
+## How to Run the Project 🚀
 
 ### **Prerequisites**
 1. **Python:** Ensure you have Python 3.10 or higher installed.
@@ -50,6 +50,7 @@ What's Cookin' is a user-friendly web application designed to simplify meal plan
     ```
 - Wait for the containers to build and start.
 - Open your browser and navigate to http://localhost:5000 to access the web app.
+- What's Cookin is also deployed through Digital Ocean, at http://157.230.85.234:5000/login
 
 ### **Navigating What's Cookin'**
 - Register an account and log in.

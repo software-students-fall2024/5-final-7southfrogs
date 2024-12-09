@@ -46,14 +46,21 @@ jobs:
           push: true
           tags: dave147/whatscooking-web:latest
 
-      - name: Deploy to DigitalOcean
-        uses: digitalocean/action-doctl@v2
+      - name: Deploy to Existing DigitalOcean Droplet
+        uses: appleboy/ssh-action@master
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - run: |
-          doctl compute droplet create whats-cooking-web \
-          --region nyc1 \
-          --size s-1vcpu-1gb \
-          --image docker-20-04 \
-          --tag-name web-app \
-          --enable-monitoring
+          host: ${{ secrets.DROPLET_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          debug: true
+          script: |
+            # Navigate to the deployment directory
+            cd /root/5-final-7southfrogs
+
+            # Pull the latest images from Docker Hub
+            docker pull dave147/whatscooking-web:latest
+            docker pull dave147/whatscooking-db:latest
+
+            # Restart the containers using docker-compose
+            docker-compose down
+            docker-compose up -d
