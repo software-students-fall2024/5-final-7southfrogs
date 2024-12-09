@@ -12,6 +12,12 @@ jobs:
   build-test-push-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -25,16 +31,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pylint black
-      
+          pip install pylint black pytest pytest-cov
+
+      - name: Set environment variables
+        run: echo "MONGO_URI=mongodb://localhost:27017/" >> $GITHUB_ENV
+
       - name: Format code with Black
         run: black web_app/
 
       - name: Run linting
         run: pylint web_app/app.py
-      
-      - name: Run tests with pytest
-        run: pytest
+
+      - name: Run tests with pytest and measure coverage
+        env:
+          MONGO_URI: ${{ env.MONGO_URI }}
+        run: pytest --cov=web_app --cov-report=xml --cov-report=term
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.xml
 
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -50,20 +67,14 @@ jobs:
           tags: dave147/whatscooking-web:latest
 
       - name: Deploy to Existing DigitalOcean Droplet
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.DROPLET_IP }}
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          debug: true
           script: |
-            # Navigate to the deployment directory
             cd /root/5-final-7southfrogs
-
-            # Pull the latest images from Docker Hub
             docker pull dave147/whatscooking-web:latest
             docker pull dave147/whatscooking-db:latest
-
-            # Restart the containers using docker-compose
             docker-compose down
             docker-compose up -d

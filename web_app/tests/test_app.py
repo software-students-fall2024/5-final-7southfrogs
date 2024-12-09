@@ -34,7 +34,7 @@ def test_home(client):
     """Test the home page."""
     response = client.get("/")
     assert response.status_code == 200
-    assert b"Find Recipes" in response.data  
+    assert b"Find Recipes" in response.data
 
 
 def test_register_existing_user(client, test_users):
