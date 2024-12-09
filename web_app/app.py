@@ -33,6 +33,11 @@ EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2"
 
 logging.basicConfig(level=logging.INFO)
 
+@app.context_processor
+def inject_user():
+    username = session.get('username')
+    return dict(username=username)
+
 
 def login_required(func):
     def wrapper(*args, **kwargs):

@@ -46,18 +46,19 @@ nav ul li a {
     padding: 10px 15px;
     border-radius: 5px;
     transition: all 0.4s ease-in-out;
+    font-weight: bold;
 }
 
 /* Logout link */
-.logout-link {
-    background: red;
+.logout-link{
+    background: linear-gradient(90deg, #fc0000, #de1d1d);
     color: white;
     transition: all 0.4s ease-in-out;
 }
 .logout-link:hover {
-    background: #cc0000;
+    background: linear-gradient(90deg, #b40808, #de1d1d);
     color: white;
-    box-shadow: none;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5);
 }
 
 main {
@@ -111,7 +112,7 @@ button, .back-home, a {
 }
 
 /* Exclude yes-btn and no-btn from universal hover */
-button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-home:hover, a:hover {
+button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover:not(.mark-made-btn):hover, .back-home:hover, a:hover {
     background: linear-gradient(90deg, #b03060, #ff5c8a);
     color: white;
     box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
@@ -119,37 +120,46 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
 
 /* Remove button red */
 .remove-btn {
-    background: red;
+    background: linear-gradient(90deg, #fc0000, #de1d1d);
     color: white;
-    border: none;
-    margin: 5px;
-    padding: 8px 15px;
-    border-radius: 20px;
     transition: all 0.4s ease-in-out;
 }
 
 .remove-btn:hover {
-    background: #cc0000;
+    background: linear-gradient(90deg, #b40808, #de1d1d);
     color: white;
-    box-shadow: none;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5);
     cursor: pointer;
 }
 
 /* Reset button (Orange/Yellow) */
-.reset-btn {
-    background: #ffaa00;
-    color: black;
-    border: none;
-    margin: 5px;
-    padding: 8px 15px;
-    border-radius: 20px;
+.reset-btn{
+    color: white;
+    text-decoration: none;
     transition: all 0.4s ease-in-out;
+    background: linear-gradient(90deg, #791dde, #811dbd);
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .reset-btn:hover {
-    background: linear-gradient(90deg, #e6b800, #e69900);
-    box-shadow: 0 8px 20px rgba(230, 184, 0, 0.5);
-    color: black;
+    background: linear-gradient(90deg, #5f1aaa, #811dbd);
+    color: white;
+    box-shadow: 0 8px 20px rgba(181, 4, 245, 0.5);
+}
+
+.mark-made-btn {
+    color: white;
+    text-decoration: none;
+    transition: all 0.4s ease-in-out;
+    background: linear-gradient(90deg, #791dde, #811dbd);
+    margin-bottom: 5px;
+}
+
+.mark-made-btn:hover {
+    background: linear-gradient(90deg, #5f1aaa, #811dbd);
+    color: white;
+    box-shadow: 0 8px 20px rgba(181, 4, 245, 0.5);
 }
 
 /* Boxed Form */
@@ -163,16 +173,16 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
     text-align: left;
 }
 
-/* Removed the flex layout from the form to ensure proper vertical stacking */
-/* .boxed-form form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-} */
-
 .boxed-form form {
     margin-top: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+#login-form {
+    display: flex;
+    flex-direction: column;
+    padding: 0px 30px;
 }
 
 .form-group {
@@ -224,6 +234,7 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     padding-bottom: 20px;
+    color: black;
 }
 
 .recipe-card:hover {
@@ -247,7 +258,6 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
 }
 
 .recipe-card p {
-    color: #666;
     font-size: 0.9rem;
     margin: 5px 0;
 }
@@ -256,11 +266,14 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
 .recipe-card p a {
     color: white;
     text-decoration: none;
-    transition: color 0.3s;
+    transition: all 0.4s ease-in-out;
+    background: linear-gradient(90deg, #1d80de, #1b65cc);
 }
 
 .recipe-card p a:hover {
-    color: #ff5c8a;
+    background: linear-gradient(90deg, #0c5aa3, #1b65cc);
+    color: white;
+    box-shadow: 0 8px 20px rgba(0, 106, 255, 0.5);
 }
 
 /* Lists */
@@ -284,7 +297,7 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
 }
 
 .list-item button {
-    background: linear-gradient(90deg, #800080, #b03060);
+    background: linear-gradient(90deg, #fc0000, #de1d1d);
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
@@ -293,8 +306,8 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
 }
 
 .list-item button:hover {
-    background: linear-gradient(90deg, #b03060, #ff5c8a);
-    box-shadow: 0 8px 20px rgba(255, 87, 124, 0.5);
+    background: linear-gradient(90deg, #b03030, #ff5c5c);
+    box-shadow: 0 8px 20px rgba(255, 3, 3, 0.543);
     color: white;
 }
 
@@ -313,18 +326,13 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
     box-shadow: 0 8px 15px rgba(255, 107, 107, 0.5);
 }
 
-.recipe-card.made-liked h2, .recipe-card.made-liked p, .recipe-card.made-liked a,
-.recipe-card.made-disliked h2, .recipe-card.made-disliked p, .recipe-card.made-disliked a {
-    color: black; 
-}
-
-.recipe-card.made-liked button:hover,
+/* .recipe-card.made-liked button:hover,
 .recipe-card.made-disliked button:hover {
     background: white;
     color: black;
     box-shadow: none;
     cursor: pointer;
-}
+} */
 
 /* Status Bubble */
 .status-bubble {
@@ -401,9 +409,9 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
     background: #fff; 
     padding: 20px; 
     border-radius: 5px; 
-    text-align: center;
+    /* text-align: center;
     max-width: 300px;
-    width: 80%;
+    width: 80%; */
 }
 
 .modal-content h2 {
@@ -461,3 +469,40 @@ button:not(.yes-btn):not(.no-btn):not(.remove-btn):not(.reset-btn):hover, .back-
     margin-top: 20px;
 }
 
+#delete-btn:hover {
+    background: linear-gradient(90deg, #b40808, #de1d1d);
+    color: white;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5);
+}
+
+#more-info-btn {
+    color: white;
+    text-decoration: none;
+    transition: all 0.4s ease-in-out;
+    background: linear-gradient(90deg, #791dde, #811dbd);
+}
+
+#more-info-btn:hover {
+    background: linear-gradient(90deg, #5f1aaa, #811dbd);
+    color: white;
+    box-shadow: 0 8px 20px rgba(181, 4, 245, 0.5);
+}
+
+/* #save-recipe-btn {
+    color: white;
+    text-decoration: none;
+    transition: all 0.4s ease-in-out;
+    background: linear-gradient(90deg, #39de1d, #54bd1d);;
+}
+
+#save-recipe-btn:hover {
+    color: white;
+    background: linear-gradient(90deg, #32bd1a, #54bd1d);
+    box-shadow: 0 0 15px 3px #24ea48;
+} */
+
+#find-recipes-btn {
+    padding: 15px 30px;
+    font-weight: bold;
+    font-size: 20px;
+}
